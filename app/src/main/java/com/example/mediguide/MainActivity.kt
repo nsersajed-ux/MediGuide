@@ -3,7 +3,18 @@ package com.example.mediguide
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,7 +27,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MediGuideTheme {
-                MediGuideAppNavigation()
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    MediGuideAppNavigation()
+                }
             }
         }
     }
@@ -30,21 +46,65 @@ fun MediGuideAppNavigation() {
         navController = navController,
         startDestination = "welcome"
     ) {
-        composable("welcome") {
+        composable(route = "welcome") {
             WelcomeScreen(
                 onGetStartedClick = {
-                    navController.navigate("home") {
-                        popUpTo("welcome") { inclusive = true }
+                    navController.navigate(route = "home") {
+                        popUpTo(route = "welcome") { inclusive = true }
                     }
                 }
             )
         }
-        composable("home") {
+
+        composable(route = "home") {
             HomeScreen(
                 onAIAssistantClick = {
-                    // سنقوم بربط شاشة المحادثة هنا في الخطوة القادمة
+                    navController.navigate(route = "chat")
+                },
+                onMedicineClick = { medicine ->
+                    // Handle medicine click here if needed
                 }
             )
+        }
+
+        composable(route = "chat") {
+            ChatMessageScreenPlaceholder(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun ChatMessageScreenPlaceholder(onBackClick: () -> Unit) {
+    // يمكنك وضع أزرار الترجمة هنا أو في الواجهة الرئيسية حسب رغبتك
+}
+
+@Composable
+fun LanguageSwitchButtons(
+    onArabicClick: () -> Unit,
+    onEnglishClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Button(
+            onClick = onArabicClick,
+            modifier = Modifier.padding(end = 8.dp)
+        ) {
+            Text(text = "العربية")
+        }
+
+        Button(
+            onClick = onEnglishClick,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text(text = "English")
         }
     }
 }
