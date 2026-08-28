@@ -13,12 +13,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mediguide.screens.HomeScreen
+import com.example.mediguide.screens.MedicineDetailScreen
 import com.example.mediguide.screens.WelcomeScreen
 import com.example.mediguide.ui.theme.MediGuideTheme
 
@@ -41,6 +46,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MediGuideAppNavigation() {
     val navController = rememberNavController()
+    var selectedMedicine by remember { mutableStateOf<Medicine?>(null) }
 
     NavHost(
         navController = navController,
@@ -62,9 +68,24 @@ fun MediGuideAppNavigation() {
                     navController.navigate(route = "chat")
                 },
                 onMedicineClick = { medicine ->
-                    // Handle medicine click here if needed
+                    selectedMedicine = medicine
+                    navController.navigate(route = "medicine_detail")
                 }
             )
+        }
+
+        composable(route = "medicine_detail") {
+            selectedMedicine?.let { medicine ->
+                MedicineDetailScreen(
+                    medicine = medicine,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onAskAI = { question ->
+                        navController.navigate(route = "chat")
+                    }
+                )
+            }
         }
 
         composable(route = "chat") {
@@ -79,32 +100,5 @@ fun MediGuideAppNavigation() {
 
 @Composable
 fun ChatMessageScreenPlaceholder(onBackClick: () -> Unit) {
-    // يمكنك وضع أزرار الترجمة هنا أو في الواجهة الرئيسية حسب رغبتك
-}
-
-@Composable
-fun LanguageSwitchButtons(
-    onArabicClick: () -> Unit,
-    onEnglishClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Button(
-            onClick = onArabicClick,
-            modifier = Modifier.padding(end = 8.dp)
-        ) {
-            Text(text = "العربية")
-        }
-
-        Button(
-            onClick = onEnglishClick,
-            modifier = Modifier.padding(start = 8.dp)
-        ) {
-            Text(text = "English")
-        }
-    }
+    // يمكنك وضع محتوى شاشة المحادثة هنا
 }
