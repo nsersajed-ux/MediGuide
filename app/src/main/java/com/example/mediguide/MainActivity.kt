@@ -4,9 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -63,15 +67,34 @@ fun MediGuideAppNavigation() {
         }
 
         composable(route = "home") {
-            HomeScreen(
-                onAIAssistantClick = {
-                    navController.navigate(route = "chat")
-                },
-                onMedicineClick = { medicine ->
-                    selectedMedicine = medicine
-                    navController.navigate(route = "medicine_detail")
+            // سنعرض الشاشة الرئيسية ومعها زر الانتقال لشاشة المنبهات
+            Column(modifier = Modifier.fillMaxSize()) {
+                Box(modifier = Modifier.weight(1f)) {
+                    HomeScreen(
+                        onAIAssistantClick = {
+                            navController.navigate(route = "chat")
+                        },
+                        onMedicineClick = { medicine ->
+                            selectedMedicine = medicine
+                            navController.navigate(route = "medicine_detail")
+                        }
+                    )
                 }
-            )
+                // زر الانتقال إلى شاشة منبهات الأدوية
+                Button(
+                    onClick = { navController.navigate(route = "alarm") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text("⏰ إدارة منبهات الأدوية")
+                }
+            }
+        }
+
+        // مسار شاشة المنبهات التي قمنا بإنمجتها
+        composable(route = "alarm") {
+            MedicineAlarmScreen()
         }
 
         composable(route = "medicine_detail") {
@@ -87,7 +110,6 @@ fun MediGuideAppNavigation() {
                 )
             }
         }
-
         composable(route = "chat") {
             ChatMessageScreenPlaceholder(
                 onBackClick = {
